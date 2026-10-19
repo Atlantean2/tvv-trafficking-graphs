@@ -25,9 +25,10 @@ for i,s in enumerate(P.slides,1):
     cap=f"{f.get('Publisher','')}. {f.get('What it counts','')}".strip(". ")
     lst=secs.setdefault(key,[]);fn=f"{key}-{len(lst)+1:02d}.webp";save_img(pic.image.blob,"issues/img/"+fn)
     lst.append(figure("img/"+fn,title,cap,urls[:2]))
+LABELS={"Q1":"Global Scale","Q2":"US Case Counts","Q3":"Labor and Visas","Q4":"Migrant Victims","Q5":"Child Migrants","Q6":"Data Quality"}
 tabs=[]
 def w(k,lab,body): open(f"issues/{k}.html","w").write(page(T,k,body));tabs.append((k,lab))
 for q in sorted(k for k in secs if k!="TVV"):
-    w(q,f"{q}",f'<h2 class="desk">{q}. {E(heads.get(q,""))}</h2>'+"\n".join(secs[q]))
+    w(q,f"{q} {LABELS[q]}",f'<h2 class="desk">{q}. {E(heads.get(q,""))}</h2>'+"\n".join(secs[q]))
 w("sources","Sources",f'<h2 class="desk">Sources ({len(allsrc)} links)</h2><ul class="src">'+"".join(f'<li><a href="{E(u)}">{E(u)}</a></li>' for u in allsrc)+"</ul>")
 index(T,tabs,"Sections",cur="traffic");print({k:len(v) for k,v in secs.items()},len(allsrc))
