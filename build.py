@@ -1,7 +1,8 @@
 """Slides only (no docx/CSV). Builds the TechVestVentures Trafficking Graphs site from focus/immigration (pptx + docx + CSVs)."""
 import os,re,sys,shutil,glob
-sys.path.insert(0,'/workspace/risk-watcher/graphs-site');os.chdir(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0,'/workspace/risk-watcher/graphs-site');sys.path.insert(0,'/workspace/risk-watcher');os.chdir(os.path.dirname(os.path.abspath(__file__)))
 from common import *
+import common,weekly_lib as WL
 from pptx import Presentation
 T="TechVestVentures Trafficking Graphs";F="/workspace/risk-watcher/focus/trafficking"
 P=Presentation(glob.glob(F+"/TVV Focus Human Trafficking Graphs Collection 2026-10-18 mh2.pptx")[0])
@@ -30,5 +31,10 @@ tabs=[]
 def w(k,lab,body): open(f"issues/{k}.html","w").write(page(T,k,body));tabs.append((k,lab))
 for q in sorted(k for k in secs if k!="TVV"):
     w(q,f"{q} {LABELS[q]}",f'<h2 class="desk">{q}. {E(heads.get(q,""))}</h2>'+"\n".join(secs[q]))
+common.CSS+=WL.GRID_CSS
+WG=WL.add_tabs("Trafficking",w,E,save_img,start=7,note="Weekly Focus graphs: new charts are added each week from primary data. Each caption names its sources; numbers are not copied from third-party chart images.")
+allsrc_w=WL.sources("Trafficking")
+for u in allsrc_w:
+    if u not in allsrc: allsrc.append(u)
 w("sources","Sources",f'<h2 class="desk">Sources ({len(allsrc)} links)</h2><ul class="src">'+"".join(f'<li><a href="{E(u)}">{E(u)}</a></li>' for u in allsrc)+"</ul>")
 index(T,tabs,"Sections",cur="traffic");print({k:len(v) for k,v in secs.items()},len(allsrc))
